@@ -9,7 +9,7 @@ def home():
     return "I am alive!"
 
 def run():
-    # Render provides a PORT environment variable automatically
+    # IMPORTANT: Render automatically assigns a PORT. We must use it.
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
 

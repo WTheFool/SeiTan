@@ -100,3 +100,54 @@ class AppealView(discord.ui.View):
                 role = await guild.create_role(name="Irredeemable", color=discord.Color.from_rgb(20, 0, 0))
             if role not in member.roles:
                 await member.add_roles(role)
+
+class JoinAppealView(discord.ui.View):
+    def __init__(self, user_id, days_left, reason, original_guild_id, bot):
+        super().__init__(timeout=None)
+        self.user_id = user_id
+        self.days_left = days_left
+        self.reason = reason
+        self.original_guild_id = original_guild_id
+        self.bot = bot
+
+    @discord.ui.button(label="Condemn", style=discord.ButtonStyle.danger, custom_id="join_condemn")
+    async def condemn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not is_admin(interaction.user, interaction.guild):
+            return await interaction.response.send_message("Only Punishers can pass judgment.", ephemeral=True)
+            
+        from systems.sentences import assign_sentence
+        
+        member = interaction.guild.get_member(self.user_id)
+        if not member:
+            return await interaction.response.send_message("User left the server.", ephemeral=True)
+            
+        # Condemn them locally using default mode
+        assign_sentence(self.user_id, interaction.guild.id, self.days_left, "default", self.reason)
+        
+        sinner_role = discord.utils.get(interaction.guild.roles, name="Sinner")
+        if not sinner_role:
+            sinner_role = await interaction.guild.create_role(name="Sinner", color=discord.Color.dark_red())
+            
+        await member.add_roles(sinner_role)
+        
+        channel = discord.utils.get(interaction.guild.text_channels, name="hell")
+        if not channel:
+            channel = await interaction.guild.create_text_channel("hell")
+            
+        for child in self.children:
+            child.disabled = True
+            
+        await interaction.response.edit_message(content=f"**{member.display_name} has been CONDEMNED by {interaction.user.mention}.** They have been cast into #HELL.", view=self)
+
+    @discord.ui.button(label="Release", style=discord.ButtonStyle.success, custom_id="join_release")
+    async def release(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not is_admin(interaction.user, interaction.guild):
+            return await interaction.response.send_message("Only Punishers can pass judgment.", ephemeral=True)
+            
+        member = interaction.guild.get_member(self.user_id)
+        name = member.display_name if member else "The user"
+            
+        for child in self.children:
+            child.disabled = True
+            
+        await interaction.response.edit_message(content=f"**{name} has been RELEASED by {interaction.user.mention}.** They walk free in this server.", view=self)

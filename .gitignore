@@ -1,0 +1,20 @@
+# Environment variables
+.env
+
+# Database
+data/
+*.db
+seitan.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDEs
+.idea/
+.vscode/
+
+# Render
+build/

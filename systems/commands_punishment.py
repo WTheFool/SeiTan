@@ -196,12 +196,15 @@ class Punishment(commands.Cog):
 
     @seitan.command(name="sentence")
     async def seitan_sentence(self, ctx):
+        # We need to allow sinners to use this, but `check` might block them if they are not admin.
+        # Wait, commands don't automatically use `self.check` unless we add it as a decorator or call it.
+        # Since we use `if not self.check(ctx):` manually in commands, we can just omit it here!
         row = SentencesDB.get_sentence(ctx.author.id, ctx.guild.id)
 
         if not row:
             return await ctx.send("You are not currently condemned to #HELL in this server.", ephemeral=True)
 
-        days_left, _, mode = row
+        days_left, original_days, mode = row
         await ctx.send(f"🔥 {ctx.author.mention}, you have **{days_left} days** remaining. (Mode: {mode})", ephemeral=True)
 
     @seitan.command(name="grant")

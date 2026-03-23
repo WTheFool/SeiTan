@@ -13,8 +13,7 @@ def is_authorized(ctx):
         return True
 
     # If not the owner, check if they are a sinner anywhere
-    if is_sinner_anywhere(ctx.author.id):
-        return False
+    # REMOVED: if is_sinner_anywhere(ctx.author.id): return False
 
     role = discord.utils.get(ctx.author.roles, name=PUNISHER_ROLE_NAME)
     return role is not None
@@ -25,8 +24,7 @@ def is_admin(user, guild):
         return True
         
     # If not the owner, check if they are a sinner anywhere
-    if is_sinner_anywhere(user.id):
-        return False
+    # REMOVED: if is_sinner_anywhere(user.id): return False
     
     role = discord.utils.get(user.roles, name=PUNISHER_ROLE_NAME)
     return role is not None

@@ -49,6 +49,9 @@ class Punishment(commands.Cog):
         conn.commit()
 
     def check(self, ctx):
+        # We also want to let the server owner bypass, even if there's a bug in is_admin
+        if ctx.guild.owner_id == ctx.author.id:
+            return True
         return is_admin(ctx.author, ctx.guild)
 
     @commands.group(invoke_without_command=True)
@@ -203,7 +206,7 @@ class Punishment(commands.Cog):
 
     @seitan.command(name="grant")
     async def seitan_grant(self, ctx, authority_type: str, member: discord.Member = None):
-        if ctx.guild.owner_id != ctx.author.id and not is_admin(ctx.author, ctx.guild):
+        if not self.check(ctx):
             return await ctx.send("No permission.")
             
         if authority_type.lower() == "authority":
@@ -247,7 +250,7 @@ class Punishment(commands.Cog):
 
     @seitan.command(name="blind")
     async def seitan_blind(self, ctx, member: discord.Member):
-        if ctx.guild.owner_id != ctx.author.id and not is_admin(ctx.author, ctx.guild):
+        if not self.check(ctx):
             return await ctx.send("No permission.")
 
         vision_role = discord.utils.get(ctx.guild.roles, name="Hellish Observer")
@@ -260,7 +263,7 @@ class Punishment(commands.Cog):
     @seitan.command(name="help")
     async def seitan_help(self, ctx):
         is_owner = ctx.guild.owner_id == ctx.author.id
-        punisher = is_admin(ctx.author, ctx.guild)
+        punisher = self.check(ctx)
         
         row = SentencesDB.get_sentence(ctx.author.id, ctx.guild.id)
         is_sinner = bool(row)

@@ -291,6 +291,7 @@ class Punishment(commands.Cog):
             `!seitan grant vision <@user>` - Grant someone read-only access to #HELL.
             `!seitan blind <@user>` - Remove someone's read-only access to #HELL.
             `!seitan incorrect <message>` - Add a custom incorrect phrase message.
+            `!seitan check` - Check your admin status.
             `!sinners` - View the list of all users currently in HELL.
             `!addphrase <phrase>` - Add a custom apology phrase.
             `!addjoke <joke>` - Add a custom bad joke to mock the sinners.
@@ -322,6 +323,12 @@ class Punishment(commands.Cog):
         conn.commit()
         
         await ctx.send("Incorrect message added.")
+
+    @seitan.command(name="check")
+    async def seitan_check(self, ctx):
+        is_owner = ctx.guild.owner_id == ctx.author.id
+        is_admin_check = is_admin(ctx.author, ctx.guild)
+        await ctx.send(f"Is owner: {is_owner}, Is admin: {is_admin_check}")
 
 
 async def setup(bot):

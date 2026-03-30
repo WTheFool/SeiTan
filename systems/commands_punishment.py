@@ -56,9 +56,6 @@ class Punishment(commands.Cog):
         conn.commit()
 
     def check(self, ctx):
-        # We also want to let the server owner bypass, even if there's a bug in is_admin
-        if ctx.guild.owner_id == ctx.author.id:
-            return True
         return is_admin(ctx.author, ctx.guild)
 
     @commands.group(invoke_without_command=True)

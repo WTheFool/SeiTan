@@ -76,6 +76,13 @@ class Punishment(commands.Cog):
             channel = await ctx.guild.create_text_channel("hell")
 
         sinner_role = discord.utils.get(ctx.guild.roles, name="Sinner")
+        if sinner_role:
+            # Ensure the sinner role is below the bot's highest role for manageability
+            bot_member = ctx.guild.get_member(self.bot.user.id)
+            if bot_member:
+                bot_top_role = max(bot_member.roles, key=lambda r: r.position)
+                if sinner_role.position >= bot_top_role.position:
+                    await sinner_role.edit(position=bot_top_role.position - 1)
         if not sinner_role:
             # Create the role if it doesn't exist and restrict permissions
             sinner_role = await ctx.guild.create_role(name="Sinner", color=discord.Color.dark_red())

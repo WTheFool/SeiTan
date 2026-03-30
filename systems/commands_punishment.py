@@ -46,6 +46,13 @@ class Punishment(commands.Cog):
             text TEXT
         )
         """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS incorrect_messages (
+            guild_id INTEGER,
+            text TEXT
+        )
+        """)
         conn.commit()
 
     def check(self, ctx):
@@ -286,6 +293,7 @@ class Punishment(commands.Cog):
             `!seitan beg <@user>` - Reset a Sinner's appeal cooldown.
             `!seitan grant vision <@user>` - Grant someone read-only access to #HELL.
             `!seitan blind <@user>` - Remove someone's read-only access to #HELL.
+            `!seitan incorrect <message>` - Add a custom incorrect phrase message.
             `!sinners` - View the list of all users currently in HELL.
             `!addphrase <phrase>` - Add a custom apology phrase.
             `!addjoke <joke>` - Add a custom bad joke to mock the sinners.
@@ -304,6 +312,19 @@ class Punishment(commands.Cog):
             embed.description = "You are but a mortal. Stay pure, lest you find yourself needing these commands."
 
         await ctx.send(embed=embed)
+
+    @seitan.command(name="incorrect")
+    async def seitan_incorrect(self, ctx, *, message: str):
+        if not self.check(ctx):
+            return await ctx.send("No permission.")
+        
+        if not message:
+            return await ctx.send("Usage: !seitan incorrect <message>")
+        
+        cursor.execute("INSERT INTO incorrect_messages (guild_id, text) VALUES (?, ?)", (ctx.guild.id, message))
+        conn.commit()
+        
+        await ctx.send("Incorrect message added.")
 
 
 async def setup(bot):

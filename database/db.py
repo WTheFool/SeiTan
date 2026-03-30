@@ -124,4 +124,11 @@ def init_db():
     )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS incorrect_messages (
+        guild_id INTEGER,
+        text TEXT
+    )
+    """)
+
     conn.commit()

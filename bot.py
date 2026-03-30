@@ -81,18 +81,19 @@ async def on_member_join(member):
                 origin_name = origin_guild.name if origin_guild else f"Unknown Server ({origin_guild_id})"
                 
                 # Send the join appeal to a punisher-friendly channel. We default to #hell if it exists.
-                channel = discord.utils.get(member.guild.text_channels, name="hell")
-                if not channel:
-                    channel = member.guild.text_channels[0] # Fallback to first channel if #hell not found yet
+                channel = member.guild.text_channels[0]  # Use the first text channel to ensure punishers see it
                     
                 embed = discord.Embed(title="⚠️ GLOBAL HELL INTRUDER", description=f"{member.mention} has joined the server. They are currently serving a sentence in another realm.", color=discord.Color.dark_orange())
                 embed.add_field(name="Sins", value=reason, inline=False)
                 embed.add_field(name="Sentence Remaining", value=f"{days_left} days", inline=True)
                 embed.add_field(name="Origin Server", value=origin_name, inline=True)
                 
+                punisher_role = discord.utils.get(member.guild.roles, name="Punisher")
+                content = punisher_role.mention if punisher_role else ""
+                
                 view = JoinAppealView(user_id, days_left, reason, origin_guild_id, bot)
                 
-                await channel.send(embed=embed, view=view)
+                await channel.send(content=content, embed=embed, view=view)
 
 async def load():
     await bot.load_extension("systems.commands_punishment")

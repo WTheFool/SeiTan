@@ -87,5 +87,6 @@ async def justice_loop(bot):
                 if can_ping(user_id):
                     phrase = get_random_phrase(guild_id)
                     await channel.send(f"{member.mention} say -> \"{phrase}\"")
+                    await asyncio.sleep(10)  # Stagger pings to avoid spamming
 
         await asyncio.sleep(86400)  # 1 cycle per day

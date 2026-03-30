@@ -110,7 +110,7 @@ class JoinAppealView(discord.ui.View):
         self.original_guild_id = original_guild_id
         self.bot = bot
 
-    @discord.ui.button(label="Condemn", style=discord.ButtonStyle.danger, custom_id="join_condemn")
+    @discord.ui.button(label="Damnation", style=discord.ButtonStyle.danger, custom_id="join_condemn")
     async def condemn(self, interaction: discord.Interaction, button: discord.ui.Button):
         if not is_admin(interaction.user, interaction.guild):
             return await interaction.response.send_message("Only Punishers can pass judgment.", ephemeral=True)
@@ -139,7 +139,7 @@ class JoinAppealView(discord.ui.View):
             
         await interaction.response.edit_message(content=f"**{member.display_name} has been CONDEMNED by {interaction.user.mention}.** They have been cast into #HELL.", view=self)
 
-    @discord.ui.button(label="Release", style=discord.ButtonStyle.success, custom_id="join_release")
+    @discord.ui.button(label="Absolvement", style=discord.ButtonStyle.success, custom_id="join_release")
     async def release(self, interaction: discord.Interaction, button: discord.ui.Button):
         if not is_admin(interaction.user, interaction.guild):
             return await interaction.response.send_message("Only Punishers can pass judgment.", ephemeral=True)
@@ -150,4 +150,4 @@ class JoinAppealView(discord.ui.View):
         for child in self.children:
             child.disabled = True
             
-        await interaction.response.edit_message(content=f"**{name} has been RELEASED by {interaction.user.mention}.** They walk free in this server.", view=self)
+        await interaction.response.edit_message(content=f"**{name} has been RELEASED by {interaction.user.mention}**. They walk free in this server.", view=self)

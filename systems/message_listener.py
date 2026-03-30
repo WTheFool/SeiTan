@@ -1,5 +1,5 @@
 import discord
-from systems.phrase_engine import validate_phrase
+from systems.phrase_engine import validate_phrase, pick_incorrect_message
 from systems.cycle_engine import record_response, process_cycle
 from systems.sentence_logic import apply_sentence_effect
 from systems.anti_spam import can_ping
@@ -69,4 +69,5 @@ async def handle_message(bot, message):
             is_global = SettingsDB.is_global_hell(guild_id)
             SentencesDB.delete_sentence(user_id, guild_id, is_global)
     else:
-        await message.channel.send("❌ Incorrect phrase.")
+        incorrect_message = pick_incorrect_message(guild_id)
+        await message.channel.send(incorrect_message)

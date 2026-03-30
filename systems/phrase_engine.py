@@ -54,3 +54,14 @@ def validate_phrase(guild_id, message_content):
             return True
 
     return False
+
+
+def get_incorrect_messages(guild_id):
+    cursor.execute("SELECT text FROM incorrect_messages WHERE guild_id=?", (guild_id,))
+    rows = cursor.fetchall()
+    return [r[0] for r in rows] if rows else ["❌ Incorrect phrase."]
+
+
+def pick_incorrect_message(guild_id):
+    messages = get_incorrect_messages(guild_id)
+    return random.choice(messages)
